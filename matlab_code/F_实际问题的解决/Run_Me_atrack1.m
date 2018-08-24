@@ -1,0 +1,92 @@
+clc;
+clear;
+close all;
+warning off;
+
+
+%产生随机网络
+%Num--顶点个数，Per--连接概率，avg_length--边的平均长度
+Num          = 500;
+K            = 1;
+Per          = 0.4;
+[matrix,x,y] = func_WSscalefree_network(Num,K,Per);
+
+%刻意进攻,模拟500次，看其受抗毁能力
+X1 = [];
+X2 = [];
+X3 = [];
+
+for kk = 1:500
+    kk
+    matrixs               = matrix;
+    [Dds,Dds_avg,M,P_Dds] = func_Degree_Distribution(matrixs);  
+    %根据节点度大小，将某一范围内的度的节点进行攻击
+    Dmax = max(Dds);
+    ind2 = find(Dds>=0.7*Dmax);
+    for i1 = 1:length(ind2)
+        for i=1:Num 
+            if i == ind2(i1)
+                for j=i+1:Num
+                    if matrix(i,j)~=0
+                       %以一定概率进行攻击
+                       p = rand;
+                       if p > 0.9
+                          matrixs(i,j) = 0; 
+                       end
+                    end
+                end
+            end
+        end
+    end
+    
+    matrixs2 = matrixs;
+    for i=1:Num 
+        for j=i+1:Num
+            if matrixs(i,j)~=0
+               %以一定概率进行攻击
+               p = rand;
+               if p > 0.9
+                  matrixs2(i,j) = 0; 
+               end
+            end
+        end
+    end
+    
+    %计算相应的指标
+    [Cc,Cc_avg]          = func_Cluster_Coeff(matrixs2);
+    [Dds,Dds_avg,M,P_Dds]= func_Degree_Distribution(matrixs2);  
+    [Lens,Lens_avg]      = func_Path_Length(matrixs2);   
+    if Lens_avg < 10000
+       X1 = [X1,Cc_avg];
+       X2 = [X2,Dds_avg];
+       X3 = [X3,Lens_avg];
+    end
+end
+
+figure;
+subplot(311);
+plot(X1);
+xlabel('模拟随机攻击次数');
+ylabel('聚类系数变化');
+subplot(312);
+plot(X2);
+xlabel('模拟随机攻击次数');
+ylabel('平均度变化'); 
+subplot(313);
+plot(X3);
+xlabel('模拟随机攻击次数');
+ylabel('平均路径长度变化');  
+ 
+save atrack1.mat X1 X2 X3 
+ 
+
+std(X1/max(X1))
+std(X2/max(X2))
+std(X3/max(X3))
+
+
+
+
+
+
+
