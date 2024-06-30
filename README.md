@@ -1,2 +1,8 @@
-# Complex-Newrorks
-Simulate complex networks with different model(small world, scale-free, random), and how to estimate the robustness (when under random attack —— remove nodes randomly ) of them.
+# Complex-Networks
+## Use Matlab to:
+### Simulate different complex networks with different models:
+ - Random   
+ - Scale-free 
+ - Small-world
+### Estimate the robustness of these models when under random attack -- simulated by removing the nodes randomly
+ 
